@@ -1,7 +1,10 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { generateMealPlan, getMealSuggestions } from '../services/geminiService';
 import { WeeklyMealPlan } from '../types';
+
+const panelClass = 'rounded-2xl border border-white/10 bg-black p-6 md:p-8';
+const inputClass =
+  'h-11 w-full rounded-lg border border-white/10 bg-white/2 px-3 text-sm text-white outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/20';
 
 const MealPlanner: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -16,69 +19,80 @@ const MealPlanner: React.FC = () => {
       try {
         const data = await getMealSuggestions(preferences);
         setSuggestions(data);
-      } catch (error) {
-        console.error(error);
-        setSuggestions(["Mediterranean Bulk", "Keto Strength", "Vegan Muscle", "Low-Carb Shred"]);
+      } catch {
+        setSuggestions(['Mediterranean high protein', 'Low carb cut', 'Budget muscle gain', 'Vegetarian bulk']);
       }
     };
-    fetchSuggestions();
+
+    void fetchSuggestions();
   }, [preferences]);
 
   const handleGenerate = async (q?: string) => {
-    const activeQuery = q || query;
+    const activeQuery = (q || query).trim();
     if (!activeQuery) return;
+
     setLoading(true);
     setError(null);
+
     try {
       const plan = await generateMealPlan(activeQuery, preferences);
       setMealPlan(plan);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Meal plan generation failed.";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Could not generate a meal plan.';
       setError(message);
-      alert(message);
     } finally {
       setLoading(false);
     }
   };
 
+  const weeklyAverage = useMemo(() => {
+    if (!mealPlan || mealPlan.plan.length === 0) return 0;
+
+    const total = mealPlan.plan.reduce((sum, day) => {
+      return sum + day.breakfast.calories + day.lunch.calories + day.dinner.calories + (day.snacks?.calories || 0);
+    }, 0);
+
+    return Math.round(total / mealPlan.plan.length);
+  }, [mealPlan]);
+
   return (
-    <div className="space-y-12 animate-in fade-in duration-700">
-      <div className="max-w-3xl">
-        <h2 className="text-4xl font-black tracking-tighter text-white uppercase">Nutritional Synthesis</h2>
-        <p className="text-muted-foreground mt-2 font-medium">Algorithmic macro distribution for peak anabolic recovery.</p>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">AI Meals</h2>
+        <p className="text-sm text-muted-foreground">Generate a simple 7-day meal plan tailored to your goal.</p>
       </div>
 
-      <div className="glass p-10 rounded-[3rem] space-y-10">
-        <div className="space-y-6">
-          <label htmlFor="meal-query" className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest">Biological Input Vector</label>
-          <div className="flex flex-col md:flex-row gap-4">
-            <input 
-              id="meal-query"
-              placeholder="e.g. 2500kcal Mediterranean with extra protein..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="flex-1 px-8 py-5 glass border-white/10 rounded-4xl outline-none focus:ring-2 focus:ring-white font-bold"
-            />
-            <button 
-              onClick={() => handleGenerate()}
-              disabled={loading}
-              className="px-12 py-5 bg-white text-black font-black text-xs uppercase tracking-[0.2em] rounded-4xl hover:opacity-90 transition disabled:opacity-20 shadow-xl flex items-center justify-center gap-3"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-              ) : 'Synthesize Diet'}
-            </button>
-          </div>
+      <section className={`${panelClass} space-y-5`}>
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_180px]">
+          <input
+            id="meal-query"
+            placeholder="e.g. 2500 kcal high-protein Mediterranean"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={() => void handleGenerate()}
+            disabled={loading}
+            className="h-11 rounded-lg bg-white px-4 text-sm font-medium text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            {loading ? 'Generating...' : 'Generate plan'}
+          </button>
         </div>
 
         <div>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6 opacity-40">Preset Matrices</p>
-          <div className="flex flex-wrap gap-3">
+          <p className="mb-2 text-xs text-muted-foreground">Quick prompts</p>
+          <div className="flex flex-wrap gap-2">
             {suggestions.map((s) => (
-              <button 
+              <button
                 key={s}
-                onClick={() => { setQuery(s); handleGenerate(s); }}
-                className="px-6 py-3 glass hover:bg-white/10 border-white/5 text-muted-foreground hover:text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all"
+                type="button"
+                onClick={() => {
+                  setQuery(s);
+                  void handleGenerate(s);
+                }}
+                className="h-9 rounded-md border border-white/10 bg-white/2 px-3 text-xs font-medium text-muted-foreground transition hover:bg-white/6 hover:text-white"
               >
                 {s}
               </button>
@@ -86,56 +100,76 @@ const MealPlanner: React.FC = () => {
           </div>
         </div>
 
-        {error && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-200">
-            {error}
-          </div>
-        )}
-      </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </section>
 
       {mealPlan && (
-        <div className="space-y-10 animate-in slide-in-from-bottom-6 duration-1000">
-          <h3 className="text-3xl font-black text-white uppercase tracking-tighter border-b border-white/5 pb-8">7-Day Protocol Stream</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-            {mealPlan.plan.map((day) => (
-              <div key={day.day} className="glass p-10 rounded-[3.5rem] group hover:bg-white/5 transition-all space-y-8 relative overflow-hidden">
-                <div className="pb-6 border-b border-white/5 flex justify-between items-center">
-                  <h4 className="text-2xl font-black text-white uppercase tracking-tighter">{day.day}</h4>
-                  <span className="text-[10px] font-black bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-white uppercase tracking-widest">
-                    {(day.breakfast.calories + day.lunch.calories + day.dinner.calories + (day.snacks?.calories || 0)).toLocaleString()} KCAL
-                  </span>
-                </div>
-                
-                <div className="space-y-8">
-                  <div className="group/item">
-                    <p className="text-[10px] font-black text-chart1 uppercase tracking-[0.2em] mb-2 opacity-60">01 AM REFUEL</p>
-                    <p className="text-lg font-bold text-white leading-tight group-hover/item:text-chart1 transition-colors">{day.breakfast.name}</p>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase mt-2 tracking-widest">{day.breakfast.calories} KCAL</p>
-                  </div>
-                  <div className="group/item">
-                    <p className="text-[10px] font-black text-chart2 uppercase tracking-[0.2em] mb-2 opacity-60">02 MID-DAY SURGE</p>
-                    <p className="text-lg font-bold text-white leading-tight group-hover/item:text-chart2 transition-colors">{day.lunch.name}</p>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase mt-2 tracking-widest">{day.lunch.calories} KCAL</p>
-                  </div>
-                  <div className="group/item">
-                    <p className="text-[10px] font-black text-green-400 uppercase tracking-[0.2em] mb-2 opacity-60">03 PM RECOVERY</p>
-                    <p className="text-lg font-bold text-white leading-tight group-hover/item:text-green-400 transition-colors">{day.dinner.name}</p>
-                    <p className="text-[10px] text-muted-foreground font-black uppercase mt-2 tracking-widest">{day.dinner.calories} KCAL</p>
-                  </div>
-                  {day.snacks && (
-                    <div className="group/item pt-4 border-t border-white/5">
-                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-2 opacity-40">04 AUXILIARY FUEL</p>
-                      <p className="font-bold text-white group-hover/item:text-white transition-colors">{day.snacks.name}</p>
+        <>
+          <section className="rounded-lg border border-white/10 bg-white/2 p-4">
+            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+              <p className="text-xs text-muted-foreground">Plan length</p>
+              <p className="mt-1 text-2xl font-semibold text-white">{mealPlan.plan.length} days</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+              <p className="text-xs text-muted-foreground">Average calories</p>
+              <p className="mt-1 text-2xl font-semibold text-white">{weeklyAverage} kcal</p>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+              <p className="text-xs text-muted-foreground">Preference</p>
+              <p className="mt-1 text-2xl font-semibold text-white">High protein</p>
+            </div>
+            </div>
+          </section>
+
+          <section className={panelClass}>
+            <h3 className="text-base font-semibold text-white">7-day plan</h3>
+            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {mealPlan.plan.map((day) => {
+                const dayTotal =
+                  day.breakfast.calories + day.lunch.calories + day.dinner.calories + (day.snacks?.calories || 0);
+
+                return (
+                  <article key={day.day} className="rounded-lg border border-white/10 bg-white/2 p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="text-sm font-semibold text-white">{day.day}</h4>
+                      <p className="text-xs text-muted-foreground">{dayTotal} kcal</p>
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
+                    <ul className="mt-3 space-y-2 text-sm">
+                      <li className="rounded-md border border-white/10 bg-black px-3 py-2">
+                        <p className="text-xs text-muted-foreground">Breakfast</p>
+                        <p className="text-white">{day.breakfast.name}</p>
+                        <p className="text-xs text-muted-foreground">{day.breakfast.calories} kcal</p>
+                      </li>
+                      <li className="rounded-md border border-white/10 bg-black px-3 py-2">
+                        <p className="text-xs text-muted-foreground">Lunch</p>
+                        <p className="text-white">{day.lunch.name}</p>
+                        <p className="text-xs text-muted-foreground">{day.lunch.calories} kcal</p>
+                      </li>
+                      <li className="rounded-md border border-white/10 bg-black px-3 py-2">
+                        <p className="text-xs text-muted-foreground">Dinner</p>
+                        <p className="text-white">{day.dinner.name}</p>
+                        <p className="text-xs text-muted-foreground">{day.dinner.calories} kcal</p>
+                      </li>
+                      {day.snacks && (
+                        <li className="rounded-md border border-white/10 bg-black px-3 py-2">
+                          <p className="text-xs text-muted-foreground">Snack</p>
+                          <p className="text-white">{day.snacks.name}</p>
+                          <p className="text-xs text-muted-foreground">{day.snacks.calories} kcal</p>
+                        </li>
+                      )}
+                    </ul>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        </>
       )}
     </div>
   );
 };
 
 export default MealPlanner;
+

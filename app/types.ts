@@ -55,6 +55,7 @@ export interface UserProfile {
   gender: 'male' | 'female' | 'other';
   goal: 'cut' | 'maintain' | 'bulk';
   activityLevel: number; // 1.2 to 1.9
+  calorieLimit: number; // user-defined daily kcal target
   avatar?: string;
 }
 

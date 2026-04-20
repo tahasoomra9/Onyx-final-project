@@ -7,11 +7,24 @@ import WorkoutLogger from './components/WorkoutLogger';
 import SleepLogger from './components/SleepLogger';
 import CalorieTracker from './components/CalorieTracker';
 import MealPlanner from './components/MealPlanner';
+import BMICalculator from './components/BMICalculator';
 import { WorkoutSession, SleepLog, CalorieLog, UserProfile, WaterLog, WorkoutTemplate } from './types';
 
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  const defaultProfile: UserProfile = {
+    id: 'usr_01',
+    name: 'User',
+    weight: 0,
+    height: 0,
+    age: 0,
+    gender: 'male',
+    goal: 'maintain',
+    activityLevel: 1.2,
+    calorieLimit: 0
+  };
   
   const [workouts, setWorkouts] = useState<WorkoutSession[]>(() => {
     const saved = localStorage.getItem('fp_workouts');
@@ -40,15 +53,18 @@ const App: React.FC = () => {
   
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('fp_profile');
-    return saved ? JSON.parse(saved) : {
-      id: 'usr_01',
-      name: 'User',
-      weight: 0,
-      height: 0,
-      age: 0,
-      gender: 'male',
-      goal: 'balance',
-      activityLevel: 1.2
+    if (!saved) return defaultProfile;
+
+    const parsed = JSON.parse(saved) as Partial<UserProfile>;
+    const safeGoal = parsed.goal === 'cut' || parsed.goal === 'maintain' || parsed.goal === 'bulk'
+      ? parsed.goal
+      : 'maintain';
+
+    return {
+      ...defaultProfile,
+      ...parsed,
+      goal: safeGoal,
+      calorieLimit: typeof parsed.calorieLimit === 'number' ? parsed.calorieLimit : 0,
     };
   });
 
@@ -119,6 +135,8 @@ const App: React.FC = () => {
         return <CalorieTracker logs={calorieLogs} userProfile={userProfile} onAddLog={(l) => setCalorieLogs([...calorieLogs, l])} onUpdateProfile={setUserProfile} />;
       case 'meal-planner':
         return <MealPlanner />;
+      case 'bmi':
+        return <BMICalculator />;
       default:
         return <Dashboard workouts={workouts} sleepLogs={sleepLogs} calorieLogs={calorieLogs} waterLogs={waterLogs} userProfile={userProfile} streak={streak} onAddWater={handleAddWater} />;
     }
