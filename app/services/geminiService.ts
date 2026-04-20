@@ -4,6 +4,14 @@ import { WeeklyMealPlan, AIWorkoutPlan } from "../types";
 
 const getAI = () => new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY || '' });
 
+const parseResponseJson = <T>(text: string | undefined): T => {
+  if (!text) {
+    throw new Error("Gemini returned an empty response.");
+  }
+
+  return JSON.parse(text) as T;
+};
+
 export const generateMealPlan = async (query: string, preferences: string): Promise<WeeklyMealPlan> => {
   const ai = getAI();
   const response = await ai.models.generateContent({
@@ -77,7 +85,7 @@ export const generateMealPlan = async (query: string, preferences: string): Prom
     }
   });
 
-  return JSON.parse(response.text) as WeeklyMealPlan;
+  return parseResponseJson<WeeklyMealPlan>(response.text);
 };
 
 export const getMealSuggestions = async (preferences: string): Promise<string[]> => {
@@ -93,7 +101,7 @@ export const getMealSuggestions = async (preferences: string): Promise<string[]>
       }
     }
   });
-  return JSON.parse(response.text);
+  return parseResponseJson<string[]>(response.text);
 };
 
 export const generateWorkoutPlan = async (goal: string, focus: string): Promise<AIWorkoutPlan> => {
@@ -126,5 +134,5 @@ export const generateWorkoutPlan = async (goal: string, focus: string): Promise<
       }
     }
   });
-  return JSON.parse(response.text) as AIWorkoutPlan;
+  return parseResponseJson<AIWorkoutPlan>(response.text);
 };

@@ -1,3 +1,6 @@
+"use client"
+
+import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -15,9 +18,11 @@ import {
 } from "@/components/ui/sidebar"
 
 export default function Page() {
+  const [activeTab, setActiveTab] = React.useState("dashboard")
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar activeTab={activeTab} setActiveTab={setActiveTab} streak={0} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
