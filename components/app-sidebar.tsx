@@ -33,19 +33,19 @@ export function AppSidebar({ activeTab, setActiveTab, streak, ...props }: Readon
   return (
     <Sidebar {...props}>
       <SidebarHeader className="gap-3 px-4 pt-4 pb-2">
-        <div className="rounded-xl border border-white/10 bg-black p-4">
+        <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs text-muted-foreground">FitPulse</p>
-              <p className="mt-1 text-base font-semibold tracking-tight text-white">Health tracker</p>
+              <p className="mt-1 text-base font-semibold tracking-tight text-foreground">Health tracker</p>
             </div>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white text-sm font-semibold text-black">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-primary text-sm font-semibold text-primary-foreground">
               FP
             </div>
           </div>
-          <div className="mt-4 rounded-lg border border-white/10 bg-white/2 p-3">
+          <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3">
             <p className="text-xs text-muted-foreground">Streak</p>
-            <p className="mt-1 text-xl font-semibold text-white">{streak} days</p>
+            <p className="mt-1 text-xl font-semibold text-foreground">{streak} days</p>
           </div>
         </div>
       </SidebarHeader>

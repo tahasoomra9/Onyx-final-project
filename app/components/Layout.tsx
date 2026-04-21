@@ -31,10 +31,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTab, stre
     <SidebarProvider>
       <AppSidebar activeTab={activeTab} setActiveTab={setActiveTab} streak={streak} />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 bg-black px-4 md:px-6">
-          <SidebarTrigger className="-ml-1 text-white hover:bg-white/5 focus-visible:ring-white" />
-          <Separator orientation="vertical" className="h-4 bg-white/10" />
-          <h1 className="text-base font-semibold text-white">{currentTabLabel}</h1>
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-border bg-card px-4 md:px-6">
+          <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted focus-visible:ring-ring" />
+          <Separator orientation="vertical" className="h-4 bg-border" />
+          <h1 className="text-base font-semibold text-foreground">{currentTabLabel}</h1>
         </header>
 
         <div className="flex flex-1 flex-col p-4 md:p-6">

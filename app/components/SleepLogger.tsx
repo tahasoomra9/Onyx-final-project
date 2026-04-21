@@ -10,9 +10,9 @@ interface SleepLoggerProps {
   onAddSleep: (log: SleepLog) => void;
 }
 
-const panelClass = 'rounded-2xl border border-white/10 bg-black p-6 md:p-8';
+const panelClass = 'rounded-2xl border border-border bg-card p-6 md:p-8';
 const inputClass =
-  'w-full rounded-lg border border-white/10 bg-white/2 px-3 py-3 text-sm text-white outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/20';
+  'w-full rounded-lg border border-border bg-muted/40 px-3 py-3 text-sm text-foreground outline-none transition focus:border-ring/60 focus:ring-2 focus:ring-ring/30';
 
 const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
   const [duration, setDuration] = useState(8);
@@ -67,30 +67,30 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
     sleepLogs.length > 0 ? sleepLogs.reduce((sum, log) => sum + log.duration, 0) / sleepLogs.length : 0;
 
   const getQualityDotClass = (q: number) => {
-    if (q >= 4) return 'bg-chart2';
-    if (q >= 3) return 'bg-chart1';
+    if (q >= 4) return 'bg-chart-2';
+    if (q >= 3) return 'bg-chart-1';
     return 'bg-destructive';
   };
 
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">Sleep</h2>
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">Sleep</h2>
         <p className="text-sm text-muted-foreground">Log sleep in seconds and review your trend.</p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-3">
-        <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+        <div className="rounded-xl border border-border bg-muted/40 p-4">
           <p className="text-xs text-muted-foreground">Average</p>
-          <p className="mt-1 text-2xl font-semibold text-white">{avgSleep.toFixed(1)}h</p>
+          <p className="mt-1 text-2xl font-semibold text-foreground">{avgSleep.toFixed(1)}h</p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+        <div className="rounded-xl border border-border bg-muted/40 p-4">
           <p className="text-xs text-muted-foreground">Entries</p>
-          <p className="mt-1 text-2xl font-semibold text-white">{sleepLogs.length}</p>
+          <p className="mt-1 text-2xl font-semibold text-foreground">{sleepLogs.length}</p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+        <div className="rounded-xl border border-border bg-muted/40 p-4">
           <p className="text-xs text-muted-foreground">Current quality</p>
-          <p className="mt-1 text-2xl font-semibold text-white">{getQualityLabel(quality).toLowerCase()}</p>
+          <p className="mt-1 text-2xl font-semibold text-foreground">{getQualityLabel(quality).toLowerCase()}</p>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">Duration</p>
-              <p className="text-sm font-medium text-white">{duration} h</p>
+              <p className="text-sm font-medium text-foreground">{duration} h</p>
             </div>
             <Slider
               min={0}
@@ -124,7 +124,7 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
           <div>
             <div className="mb-2 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">Quality</p>
-              <p className="text-sm font-medium text-white">{getQualityLabel(quality).toLowerCase()}</p>
+              <p className="text-sm font-medium text-foreground">{getQualityLabel(quality).toLowerCase()}</p>
             </div>
             <div className="grid grid-cols-5 gap-2">
               {[1, 2, 3, 4, 5].map((q) => (
@@ -132,7 +132,7 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
                   key={q}
                   type="button"
                   onClick={() => setQuality(q)}
-                  className={`h-10 rounded-lg border text-sm font-medium transition ${quality === q ? 'border-white bg-white text-black' : 'border-white/10 bg-white/2 text-muted-foreground hover:text-white'}`}
+                  className={`h-10 rounded-lg border text-sm font-medium transition ${quality === q ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-muted/40 text-muted-foreground hover:text-foreground'}`}
                   aria-label={`Set sleep quality to ${q}`}
                 >
                   {q}
@@ -152,7 +152,7 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
             />
           </div>
 
-          <button type="submit" className="h-11 w-full rounded-lg bg-white text-sm font-medium text-black transition hover:opacity-90">
+          <button type="submit" className="h-11 w-full rounded-lg bg-primary text-sm font-medium text-primary-foreground transition hover:opacity-90">
             Save sleep entry
           </button>
         </form>
@@ -160,24 +160,24 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
         <div className="space-y-6 lg:col-span-7">
           <section className={panelClass}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-white">Sleep trend</h3>
+              <h3 className="text-base font-semibold text-foreground">Sleep trend</h3>
               <span className="text-xs text-muted-foreground">Last 10 nights</span>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 8, right: 0, left: -8, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
                   <YAxis hide />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: 'rgba(0,0,0,0.98)',
+                      backgroundColor: 'var(--card)',
                       borderRadius: '10px',
-                      border: '1px solid rgba(255,255,255,0.12)',
+                      border: '1px solid var(--border)',
                       fontSize: '12px',
                     }}
-                    itemStyle={{ color: '#fff', fontWeight: 600 }}
-                    labelStyle={{ color: 'rgba(255,255,255,0.68)' }}
+                    itemStyle={{ color: 'var(--foreground)', fontWeight: 600 }}
+                    labelStyle={{ color: 'var(--muted-foreground)' }}
                   />
                   <Area
                     type="monotone"
@@ -194,16 +194,16 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
 
           <section className={panelClass}>
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-base font-semibold text-white">Recent entries</h3>
+              <h3 className="text-base font-semibold text-foreground">Recent entries</h3>
               <span className="text-xs text-muted-foreground">Last {recentLogs.length}</span>
             </div>
 
             {recentLogs.length > 0 ? (
               <div className="space-y-3">
                 {recentLogs.map((log) => (
-                  <div key={log.id} className="rounded-lg border border-white/10 bg-white/2 p-4">
+                  <div key={log.id} className="rounded-lg border border-border bg-muted/40 p-4">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-foreground">
                         {new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                       <div className="flex items-center gap-2">
@@ -211,13 +211,13 @@ const SleepLogger: React.FC<SleepLoggerProps> = ({ sleepLogs, onAddSleep }) => {
                         <span className="text-xs text-muted-foreground">{log.quality}/5</span>
                       </div>
                     </div>
-                    <p className="mt-2 text-sm text-white">{log.duration} hours</p>
+                    <p className="mt-2 text-sm text-foreground">{log.duration} hours</p>
                     {log.notes && <p className="mt-2 text-sm text-muted-foreground">{log.notes}</p>}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-white/10 px-4 py-8 text-center text-sm text-muted-foreground">
+              <div className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
                 No sleep entries yet.
               </div>
             )}

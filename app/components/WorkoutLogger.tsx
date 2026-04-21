@@ -34,9 +34,9 @@ const COMMON_EXERCISES = [
   { name: 'Hanging Leg Raises', category: 'Core' },
 ];
 
-const panelClass = 'rounded-2xl border border-white/10 bg-black p-6 md:p-8';
+const panelClass = 'rounded-2xl border border-border bg-card p-6 md:p-8';
 const inputClass =
-  'h-11 w-full rounded-lg border border-white/10 bg-white/2 px-3 text-sm text-white outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/20';
+  'h-11 w-full rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground outline-none transition focus:border-ring/60 focus:ring-2 focus:ring-ring/30';
 const labelClass = 'mb-2 block text-xs text-muted-foreground';
 
 const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
@@ -180,16 +180,16 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">Workouts</h2>
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">Workouts</h2>
           <p className="text-sm text-muted-foreground">Log sets, reps, and weight in one place.</p>
         </div>
 
-        <div className="inline-flex rounded-lg border border-white/10 bg-white/2 p-1">
+        <div className="inline-flex rounded-lg border border-border bg-muted/40 p-1">
           <button
             type="button"
             onClick={() => setActiveSubTab('log')}
             className={`h-10 rounded-md px-4 text-sm font-medium transition ${
-              activeSubTab === 'log' ? 'bg-white text-black' : 'text-muted-foreground hover:text-white'
+              activeSubTab === 'log' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Log workout
@@ -198,7 +198,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
             type="button"
             onClick={() => setActiveSubTab('ai')}
             className={`h-10 rounded-md px-4 text-sm font-medium transition ${
-              activeSubTab === 'ai' ? 'bg-white text-black' : 'text-muted-foreground hover:text-white'
+              activeSubTab === 'ai' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             AI plan
@@ -224,7 +224,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                 type="button"
                 onClick={handleSaveWorkout}
                 disabled={!canSaveWorkout}
-                className="h-11 rounded-lg bg-white px-5 text-sm font-medium text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+                className="h-11 rounded-lg bg-primary px-5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
               >
                 Save workout
               </button>
@@ -232,7 +232,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
 
             <div className="mt-6 space-y-3">
               {exercises.length === 0 && (
-                <div className="rounded-lg border border-dashed border-white/10 px-4 py-8 text-center text-sm text-muted-foreground">
+                <div className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
                   Start by adding an exercise from Quick picks.
                 </div>
               )}
@@ -241,7 +241,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                 const hasName = Boolean(ex.name?.trim());
 
                 return (
-                  <div key={ex.id} className="rounded-lg border border-white/10 bg-white/2 p-4">
+                  <div key={ex.id} className="rounded-lg border border-border bg-muted/40 p-4">
                     <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_88px_88px_110px_auto] md:items-end">
                       <div>
                         <label htmlFor={`exercise-name-${idx}`} className={labelClass}>Exercise</label>
@@ -303,7 +303,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                       <button
                         type="button"
                         onClick={() => setExercises(exercises.filter((_, i) => i !== idx))}
-                        className="h-11 rounded-lg border border-white/10 bg-transparent px-3 text-sm text-muted-foreground transition hover:bg-white/6 hover:text-white"
+                        className="h-11 rounded-lg border border-border bg-transparent px-3 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
                       >
                         Remove
                       </button>
@@ -321,7 +321,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
               <button
                 type="button"
                 onClick={() => addExercise()}
-                className="h-11 rounded-lg border border-white/10 bg-white/2 px-4 text-sm font-medium text-white transition hover:bg-white/6"
+                className="h-11 rounded-lg border border-border bg-muted/40 px-4 text-sm font-medium text-foreground transition hover:bg-muted"
               >
                 Add custom exercise
               </button>
@@ -330,7 +330,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                 type="button"
                 onClick={handleSaveAsTemplate}
                 disabled={exercises.length === 0}
-                className="h-11 rounded-lg border border-white/10 bg-transparent px-4 text-sm font-medium text-white transition hover:bg-white/6 disabled:cursor-not-allowed disabled:opacity-30"
+                className="h-11 rounded-lg border border-border bg-transparent px-4 text-sm font-medium text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-30"
               >
                 Save as template
               </button>
@@ -340,7 +340,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
           <aside className={`${panelClass} space-y-6 lg:col-span-4`}>
             <section>
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-base font-semibold text-white">Quick picks</h3>
+                <h3 className="text-base font-semibold text-foreground">Quick picks</h3>
                 <span className="text-xs text-muted-foreground">{filteredExercises.length} found</span>
               </div>
 
@@ -358,8 +358,8 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                   onClick={() => setActiveCategory(null)}
                   className={`h-8 rounded-md px-3 text-xs font-medium transition ${
                     activeCategory === null
-                      ? 'bg-white text-black'
-                      : 'border border-white/10 bg-white/2 text-muted-foreground hover:text-white'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'border border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   All
@@ -372,8 +372,8 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                     onClick={() => setActiveCategory(cat)}
                     className={`h-8 rounded-md px-3 text-xs font-medium transition ${
                       activeCategory === cat
-                        ? 'bg-white text-black'
-                        : 'border border-white/10 bg-white/2 text-muted-foreground hover:text-white'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'border border-border bg-muted/40 text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {cat}
@@ -389,7 +389,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                     key={ex.name}
                     type="button"
                     onClick={() => addExercise(ex.name)}
-                    className="flex h-10 w-full items-center justify-between rounded-lg border border-white/10 bg-white/2 px-3 text-left text-sm text-white transition hover:bg-white/6"
+                    className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-muted/40 px-3 text-left text-sm text-foreground transition hover:bg-muted"
                   >
                     <span>{ex.name}</span>
                     <span className="text-xs text-muted-foreground">Add</span>
@@ -399,20 +399,20 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
             </section>
 
             {templates.length > 0 && (
-              <section className="rounded-lg border border-white/10 bg-white/2 p-4">
-                <h3 className="mb-3 text-base font-semibold text-white">Templates</h3>
+              <section className="rounded-lg border border-border bg-muted/40 p-4">
+                <h3 className="mb-3 text-base font-semibold text-foreground">Templates</h3>
 
                 <div className="space-y-2">
                   {templates.map((tpl) => (
-                    <div key={tpl.id} className="rounded-lg border border-white/10 bg-white/2 p-3">
-                      <p className="truncate text-sm font-medium text-white">{tpl.name}</p>
+                    <div key={tpl.id} className="rounded-lg border border-border bg-muted/40 p-3">
+                      <p className="truncate text-sm font-medium text-foreground">{tpl.name}</p>
                       <p className="mt-1 text-xs text-muted-foreground">{tpl.exercises.length} exercises</p>
 
                       <div className="mt-3 flex gap-2">
                         <button
                           type="button"
                           onClick={() => loadTemplate(tpl)}
-                          className="h-9 flex-1 rounded-md bg-white text-sm font-medium text-black transition hover:opacity-90"
+                          className="h-9 flex-1 rounded-md bg-primary text-sm font-medium text-primary-foreground transition hover:opacity-90"
                         >
                           Use
                         </button>
@@ -420,7 +420,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                         <button
                           type="button"
                           onClick={() => onDeleteTemplate(tpl.id)}
-                          className="h-9 rounded-md border border-white/10 px-3 text-sm text-muted-foreground transition hover:bg-white/6 hover:text-white"
+                          className="h-9 rounded-md border border-border px-3 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
                         >
                           Delete
                         </button>
@@ -446,7 +446,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
               type="button"
               onClick={handleGenerateAI}
               disabled={isGenerating}
-              className="h-11 rounded-lg bg-white px-4 text-sm font-medium text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
+              className="h-11 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-30"
             >
               {isGenerating ? 'Generating...' : 'Generate'}
             </button>
@@ -455,17 +455,17 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
           {aiError && <p className="text-sm text-destructive">{aiError}</p>}
 
           {aiPlan && (
-            <div className="space-y-4 rounded-lg border border-white/10 bg-white/2 p-4">
+            <div className="space-y-4 rounded-lg border border-border bg-muted/40 p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{aiPlan.name}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{aiPlan.name}</h3>
                   <p className="text-sm text-muted-foreground">{aiPlan.focus}</p>
                 </div>
 
                 <button
                   type="button"
                   onClick={importAIPlan}
-                  className="h-10 rounded-lg bg-white px-4 text-sm font-medium text-black transition hover:opacity-90"
+                  className="h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:opacity-90"
                 >
                   Import to log
                 </button>
@@ -473,8 +473,8 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
 
               <div className="grid gap-3 md:grid-cols-2">
                 {aiPlan.exercises.map((ex) => (
-                  <div key={ex.name} className="rounded-lg border border-white/10 bg-black p-4">
-                    <p className="font-medium text-white">{ex.name}</p>
+                  <div key={ex.name} className="rounded-lg border border-border bg-card p-4">
+                    <p className="font-medium text-foreground">{ex.name}</p>
                     <p className="mt-1 text-sm text-muted-foreground">{ex.sets} sets · {ex.reps} reps</p>
                     <p className="mt-2 text-sm text-muted-foreground">{ex.description}</p>
                   </div>
@@ -487,7 +487,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
 
       <section className={panelClass}>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-white">Recent workouts</h3>
+          <h3 className="text-base font-semibold text-foreground">Recent workouts</h3>
           <span className="text-xs text-muted-foreground">Last {recentWorkouts.length}</span>
         </div>
 
@@ -496,9 +496,9 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
         ) : (
           <div className="space-y-3">
             {recentWorkouts.map((session) => (
-              <div key={session.id} className="rounded-lg border border-white/10 bg-white/2 p-4">
+              <div key={session.id} className="rounded-lg border border-border bg-muted/40 p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium text-white">
+                  <p className="font-medium text-foreground">
                     {new Date(session.date).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -512,7 +512,7 @@ const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({
                   {session.exercises.map((ex) => (
                     <li key={`${session.id}-${ex.name}-${ex.sets}-${ex.reps}-${ex.weight}`} className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{ex.name}</span>
-                      <span className="font-medium text-white">
+                      <span className="font-medium text-foreground">
                         {ex.sets} × {ex.reps} · {ex.weight} kg
                       </span>
                     </li>

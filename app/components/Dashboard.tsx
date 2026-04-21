@@ -19,7 +19,7 @@ const Icons = {
   Water: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
 };
 
-const sectionCard = 'rounded-2xl border border-white/10 bg-black p-6 md:p-8';
+const sectionCard = 'rounded-2xl border border-border bg-card p-6 md:p-8';
 
 const formatLabel = (date: string, format: Intl.DateTimeFormatOptions) =>
   new Date(date).toLocaleDateString('en-US', format);
@@ -31,14 +31,14 @@ interface StatTileProps {
 }
 
 const StatTile: React.FC<StatTileProps> = ({ label, value, icon }) => (
-  <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+  <div className="rounded-xl border border-border bg-muted/40 p-4">
     <div className="mb-4 flex items-center justify-between gap-4">
-      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white">
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground">
         {icon}
       </div>
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
     </div>
-    <p className="text-2xl font-semibold tracking-tight text-white">{value}</p>
+    <p className="text-2xl font-semibold tracking-tight text-foreground">{value}</p>
   </div>
 );
 
@@ -54,25 +54,25 @@ interface ChartPanelProps {
 const ChartPanel: React.FC<ChartPanelProps> = ({ title, valueLabel, stroke, fill, data, dataKey }) => (
   <section className={sectionCard}>
     <div className="mb-5 flex items-center justify-between">
-      <h3 className="text-base font-semibold text-white">{title}</h3>
+      <h3 className="text-base font-semibold text-foreground">{title}</h3>
       <span className="text-xs text-muted-foreground">{valueLabel}</span>
     </div>
     <div className="h-56">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 0, left: -12, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.06)" />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
           <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }} />
           <YAxis hide />
           <Tooltip
-            cursor={{ stroke: 'rgba(255,255,255,0.16)' }}
+            cursor={{ stroke: 'var(--border)' }}
             contentStyle={{
-              backgroundColor: 'rgba(0,0,0,0.98)',
+              backgroundColor: 'var(--card)',
               borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.12)',
+              border: '1px solid var(--border)',
               fontSize: '12px',
             }}
-            itemStyle={{ color: '#fff', fontWeight: 600 }}
-            labelStyle={{ color: 'rgba(255,255,255,0.68)' }}
+            itemStyle={{ color: 'var(--foreground)', fontWeight: 600 }}
+            labelStyle={{ color: 'var(--muted-foreground)' }}
           />
           <Area type="monotone" dataKey={dataKey} stroke={stroke} strokeWidth={2.5} fill={fill} fillOpacity={0.22} />
         </AreaChart>
@@ -156,7 +156,7 @@ const Dashboard: React.FC<DashboardProps> = ({ workouts, sleepLogs, calorieLogs,
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm text-muted-foreground">{formatLabel(today, { weekday: 'long', month: 'short', day: 'numeric' })}</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white md:text-4xl">Today</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground md:text-4xl">Today</h2>
             <p className="mt-2 text-sm text-muted-foreground">A quick view of training, sleep, and water.</p>
           </div>
           <div className="grid w-full gap-3 sm:grid-cols-3 lg:w-auto lg:min-w-110">
@@ -175,15 +175,15 @@ const Dashboard: React.FC<DashboardProps> = ({ workouts, sleepLogs, calorieLogs,
       <div className="grid gap-6 lg:grid-cols-12">
         <section className={`${sectionCard} lg:col-span-4`}>
           <div className="mb-5 flex items-center justify-between">
-            <h3 className="text-base font-semibold text-white">Hydration</h3>
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white">
+            <h3 className="text-base font-semibold text-foreground">Hydration</h3>
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground">
               <Icons.Water />
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+          <div className="rounded-xl border border-border bg-muted/40 p-4">
             <p className="text-xs text-muted-foreground">Selected day</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight text-white">{selectedWaterTotal} ml</p>
+            <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{selectedWaterTotal} ml</p>
             <p className="mt-1 text-sm text-muted-foreground">{formatLabel(selectedWaterDate, { month: 'short', day: 'numeric' })}</p>
           </div>
 
@@ -202,20 +202,20 @@ const Dashboard: React.FC<DashboardProps> = ({ workouts, sleepLogs, calorieLogs,
             <button
               type="button"
               onClick={() => onAddWater(selectedWaterDate, 250)}
-              className="h-11 rounded-lg border border-white/10 bg-white text-sm font-medium text-black transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="h-11 rounded-lg border border-border bg-primary text-sm font-medium text-primary-foreground transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Add 250 ml
             </button>
             <button
               type="button"
               onClick={() => onAddWater(selectedWaterDate, 500)}
-              className="h-11 rounded-lg border border-white/10 bg-white/2 text-sm font-medium text-white transition hover:bg-white/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="h-11 rounded-lg border border-border bg-muted/40 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               Add 500 ml
             </button>
           </div>
 
-          <div className="mt-5 border-t border-white/10 pt-4">
+          <div className="mt-5 border-t border-border pt-4">
             <p className="text-xs text-muted-foreground">Recent</p>
             <div className="mt-3 space-y-2">
               {recentWaterDays.length > 0 ? recentWaterDays.map((entry) => (
@@ -223,13 +223,13 @@ const Dashboard: React.FC<DashboardProps> = ({ workouts, sleepLogs, calorieLogs,
                   key={entry.date}
                   type="button"
                   onClick={() => setSelectedWaterDate(entry.date)}
-                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${selectedWaterDate === entry.date ? 'border-white bg-white text-black' : 'border-white/10 bg-white/2 text-white hover:bg-white/6'}`}
+                  className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedWaterDate === entry.date ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-muted/40 text-foreground hover:bg-muted'}`}
                 >
                   <span>{entry.label}</span>
                   <span className="font-semibold">{entry.amount} ml</span>
                 </button>
               )) : (
-                <div className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-sm text-muted-foreground">
+                <div className="rounded-lg border border-dashed border-border px-3 py-4 text-sm text-muted-foreground">
                   No logs yet
                 </div>
               )}
@@ -257,19 +257,19 @@ const Dashboard: React.FC<DashboardProps> = ({ workouts, sleepLogs, calorieLogs,
           />
 
           <section className={sectionCard}>
-            <h3 className="text-base font-semibold text-white">Profile</h3>
+            <h3 className="text-base font-semibold text-foreground">Profile</h3>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border border-white/10 bg-white/2 p-4">
+              <div className="rounded-lg border border-border bg-muted/40 p-4">
                 <p className="text-xs text-muted-foreground">Weight</p>
-                <p className="mt-1 text-lg font-semibold text-white">{userProfile.weight} kg</p>
+                <p className="mt-1 text-lg font-semibold text-foreground">{userProfile.weight} kg</p>
               </div>
-              <div className="rounded-lg border border-white/10 bg-white/2 p-4">
+              <div className="rounded-lg border border-border bg-muted/40 p-4">
                 <p className="text-xs text-muted-foreground">Goal</p>
-                <p className="mt-1 text-lg font-semibold capitalize text-white">{userProfile.goal}</p>
+                <p className="mt-1 text-lg font-semibold capitalize text-foreground">{userProfile.goal}</p>
               </div>
-              <div className="rounded-lg border border-white/10 bg-white/2 p-4">
+              <div className="rounded-lg border border-border bg-muted/40 p-4">
                 <p className="text-xs text-muted-foreground">Workouts</p>
-                <p className="mt-1 text-lg font-semibold text-white">{stats.totalWorkouts}</p>
+                <p className="mt-1 text-lg font-semibold text-foreground">{stats.totalWorkouts}</p>
               </div>
             </div>
           </section>

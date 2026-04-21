@@ -5,9 +5,9 @@ const BMICalculator: React.FC = () => {
   const [height, setHeight] = useState<number>(182);
   const [submitted, setSubmitted] = useState<{ weight: number; height: number }>({ weight: 82, height: 182 });
 
-  const panelClass = 'rounded-2xl border border-white/10 bg-black p-6 md:p-8';
+  const panelClass = 'rounded-2xl border border-border bg-card p-6 md:p-8';
   const inputClass =
-    'h-11 w-full rounded-lg border border-white/10 bg-white/2 px-3 text-sm text-white outline-none transition focus:border-white/30 focus:ring-2 focus:ring-white/20';
+    'h-11 w-full rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground outline-none transition focus:border-ring/60 focus:ring-2 focus:ring-ring/30';
 
   const bmiData = useMemo(() => {
     const heightInMeters = submitted.height / 100;
@@ -26,7 +26,7 @@ const BMICalculator: React.FC = () => {
       return {
         bmi: bmi.toFixed(1),
         category: 'Healthy range',
-        accent: 'text-white',
+        accent: 'text-foreground',
         message: 'You are in a healthy range. Keep your current nutrition and movement routine.',
       };
     }
@@ -60,7 +60,7 @@ const BMICalculator: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">BMI</h2>
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">BMI</h2>
         <p className="text-sm text-muted-foreground">Check body mass index from your height and weight.</p>
       </div>
 
@@ -92,7 +92,7 @@ const BMICalculator: React.FC = () => {
 
           <button
             type="submit"
-            className="h-11 w-full rounded-lg bg-white text-sm font-medium text-black transition hover:opacity-90"
+            className="h-11 w-full rounded-lg bg-primary text-sm font-medium text-primary-foreground transition hover:opacity-90"
           >
             Calculate BMI
           </button>
@@ -102,13 +102,13 @@ const BMICalculator: React.FC = () => {
           <p className="text-xs text-muted-foreground">Current result</p>
 
           <div className="flex items-end gap-3">
-            <span className="text-6xl font-semibold tracking-tight text-white tabular-nums">{bmiData.bmi}</span>
+            <span className="text-6xl font-semibold tracking-tight text-foreground tabular-nums">{bmiData.bmi}</span>
             <span className={`text-sm font-medium ${bmiData.accent}`}>{bmiData.category}</span>
           </div>
 
-          <div className="h-2 w-full overflow-hidden rounded-full bg-white/8">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full bg-white transition-all duration-500"
+              className="h-full bg-primary transition-all duration-500"
               style={{ width: `${Math.min(100, (bmiNumber / 40) * 100)}%` }}
             />
           </div>
@@ -116,21 +116,21 @@ const BMICalculator: React.FC = () => {
           <p className="text-sm leading-6 text-muted-foreground">{bmiData.message}</p>
 
           <div className="grid gap-3 sm:grid-cols-4">
-            <div className="rounded-lg border border-white/10 bg-white/2 p-3">
+            <div className="rounded-lg border border-border bg-muted/40 p-3">
               <p className="text-xs text-muted-foreground">Underweight</p>
-              <p className="mt-1 text-sm font-medium text-white">&lt; 18.5</p>
+              <p className="mt-1 text-sm font-medium text-foreground">&lt; 18.5</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/2 p-3">
+            <div className="rounded-lg border border-border bg-muted/40 p-3">
               <p className="text-xs text-muted-foreground">Healthy</p>
-              <p className="mt-1 text-sm font-medium text-white">18.5 - 24.9</p>
+              <p className="mt-1 text-sm font-medium text-foreground">18.5 - 24.9</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/2 p-3">
+            <div className="rounded-lg border border-border bg-muted/40 p-3">
               <p className="text-xs text-muted-foreground">Above</p>
-              <p className="mt-1 text-sm font-medium text-white">25 - 29.9</p>
+              <p className="mt-1 text-sm font-medium text-foreground">25 - 29.9</p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/2 p-3">
+            <div className="rounded-lg border border-border bg-muted/40 p-3">
               <p className="text-xs text-muted-foreground">High</p>
-              <p className="mt-1 text-sm font-medium text-white">30+</p>
+              <p className="mt-1 text-sm font-medium text-foreground">30+</p>
             </div>
           </div>
         </section>
