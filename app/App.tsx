@@ -9,10 +9,11 @@ import CalorieTracker from './components/CalorieTracker';
 import MealPlanner from './components/MealPlanner';
 import BMICalculator from './components/BMICalculator';
 import { WorkoutSession, SleepLog, CalorieLog, UserProfile, WaterLog, WorkoutTemplate } from './types';
+import { readFromStorage, writeToStorage } from '@/lib/local-storage';
 
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => readFromStorage('fp_active_tab', 'dashboard'));
 
   const defaultProfile: UserProfile = {
     id: 'usr_01',
@@ -26,36 +27,22 @@ const App: React.FC = () => {
     calorieLimit: 0
   };
   
-  const [workouts, setWorkouts] = useState<WorkoutSession[]>(() => {
-    const saved = localStorage.getItem('fp_workouts');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [workouts, setWorkouts] = useState<WorkoutSession[]>(() => readFromStorage('fp_workouts', []));
   
-  const [sleepLogs, setSleepLogs] = useState<SleepLog[]>(() => {
-    const saved = localStorage.getItem('fp_sleep');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [sleepLogs, setSleepLogs] = useState<SleepLog[]>(() => readFromStorage('fp_sleep', []));
   
-  const [calorieLogs, setCalorieLogs] = useState<CalorieLog[]>(() => {
-    const saved = localStorage.getItem('fp_calories');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [calorieLogs, setCalorieLogs] = useState<CalorieLog[]>(() => readFromStorage('fp_calories', []));
 
-  const [waterLogs, setWaterLogs] = useState<WaterLog[]>(() => {
-    const saved = localStorage.getItem('fp_water');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [waterLogs, setWaterLogs] = useState<WaterLog[]>(() => readFromStorage('fp_water', []));
 
-  const [templates, setTemplates] = useState<WorkoutTemplate[]>(() => {
-    const saved = localStorage.getItem('fp_templates');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [templates, setTemplates] = useState<WorkoutTemplate[]>(() => readFromStorage('fp_templates', []));
   
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
-    const saved = localStorage.getItem('fp_profile');
-    if (!saved) return defaultProfile;
+    const parsed = readFromStorage<Partial<UserProfile> | null>('fp_profile', null);
+    if (!parsed) {
+      return defaultProfile;
+    }
 
-    const parsed = JSON.parse(saved) as Partial<UserProfile>;
     const safeGoal = parsed.goal === 'cut' || parsed.goal === 'maintain' || parsed.goal === 'bulk'
       ? parsed.goal
       : 'maintain';
@@ -68,12 +55,13 @@ const App: React.FC = () => {
     };
   });
 
-  useEffect(() => localStorage.setItem('fp_workouts', JSON.stringify(workouts)), [workouts]);
-  useEffect(() => localStorage.setItem('fp_sleep', JSON.stringify(sleepLogs)), [sleepLogs]);
-  useEffect(() => localStorage.setItem('fp_calories', JSON.stringify(calorieLogs)), [calorieLogs]);
-  useEffect(() => localStorage.setItem('fp_water', JSON.stringify(waterLogs)), [waterLogs]);
-  useEffect(() => localStorage.setItem('fp_templates', JSON.stringify(templates)), [templates]);
-  useEffect(() => localStorage.setItem('fp_profile', JSON.stringify(userProfile)), [userProfile]);
+  useEffect(() => writeToStorage('fp_active_tab', activeTab), [activeTab]);
+  useEffect(() => writeToStorage('fp_workouts', workouts), [workouts]);
+  useEffect(() => writeToStorage('fp_sleep', sleepLogs), [sleepLogs]);
+  useEffect(() => writeToStorage('fp_calories', calorieLogs), [calorieLogs]);
+  useEffect(() => writeToStorage('fp_water', waterLogs), [waterLogs]);
+  useEffect(() => writeToStorage('fp_templates', templates), [templates]);
+  useEffect(() => writeToStorage('fp_profile', userProfile), [userProfile]);
 
   const streak = useMemo(() => {
     const allDates = new Set([
@@ -89,13 +77,15 @@ const App: React.FC = () => {
     const latestDate = sortedDates[0];
     if (latestDate !== today && latestDate !== yesterdayStr) return 0;
     let currentStreak = 0;
-    let checkDate = new Date(latestDate);
-    for (const _ of sortedDates) {
-        const dStr = checkDate.toISOString().split('T')[0];
-        if (allDates.has(dStr)) {
-            currentStreak++;
-            checkDate.setDate(checkDate.getDate() - 1);
-        } else { break; }
+    const checkDate = new Date(latestDate);
+    for (let i = 0; i < sortedDates.length; i += 1) {
+      const dStr = checkDate.toISOString().split('T')[0];
+      if (allDates.has(dStr)) {
+        currentStreak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        break;
+      }
     }
     return currentStreak;
   }, [workouts, sleepLogs, calorieLogs]);

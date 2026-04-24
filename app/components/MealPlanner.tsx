@@ -1,18 +1,34 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { generateMealPlan, getMealSuggestions } from '../services/geminiService';
 import { WeeklyMealPlan } from '../types';
+import { readFromStorage, writeToStorage } from '@/lib/local-storage';
 
 const panelClass = 'rounded-2xl border border-border bg-card p-6 md:p-8';
 const inputClass =
   'h-11 w-full rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground outline-none transition focus:border-ring/60 focus:ring-2 focus:ring-ring/30';
+const MEAL_PLANNER_STORAGE_KEY = 'fp_meal_planner';
+
+interface MealPlannerStorage {
+  query: string;
+  mealPlan: WeeklyMealPlan | null;
+}
 
 const MealPlanner: React.FC = () => {
-  const [query, setQuery] = useState('');
+  const initialMealPlannerState = readFromStorage<MealPlannerStorage>(MEAL_PLANNER_STORAGE_KEY, {
+    query: '',
+    mealPlan: null,
+  });
+
+  const [query, setQuery] = useState(initialMealPlannerState.query);
   const preferences = 'High Protein, Clean Eating';
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [mealPlan, setMealPlan] = useState<WeeklyMealPlan | null>(null);
+  const [mealPlan, setMealPlan] = useState<WeeklyMealPlan | null>(initialMealPlannerState.mealPlan);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    writeToStorage(MEAL_PLANNER_STORAGE_KEY, { query, mealPlan });
+  }, [query, mealPlan]);
 
   useEffect(() => {
     const fetchSuggestions = async () => {

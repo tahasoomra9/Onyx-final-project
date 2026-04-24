@@ -1,9 +1,31 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { readFromStorage, writeToStorage } from '@/lib/local-storage';
+
+interface BMICalculatorStorage {
+  weight: number;
+  height: number;
+  submitted: {
+    weight: number;
+    height: number;
+  };
+}
+
+const BMI_STORAGE_KEY = 'fp_bmi';
 
 const BMICalculator: React.FC = () => {
-  const [weight, setWeight] = useState<number>(82);
-  const [height, setHeight] = useState<number>(182);
-  const [submitted, setSubmitted] = useState<{ weight: number; height: number }>({ weight: 82, height: 182 });
+  const initialBmiState = readFromStorage<BMICalculatorStorage>(BMI_STORAGE_KEY, {
+    weight: 82,
+    height: 182,
+    submitted: { weight: 82, height: 182 },
+  });
+
+  const [weight, setWeight] = useState<number>(initialBmiState.weight);
+  const [height, setHeight] = useState<number>(initialBmiState.height);
+  const [submitted, setSubmitted] = useState<{ weight: number; height: number }>(initialBmiState.submitted);
+
+  useEffect(() => {
+    writeToStorage(BMI_STORAGE_KEY, { weight, height, submitted });
+  }, [weight, height, submitted]);
 
   const panelClass = 'rounded-2xl border border-border bg-card p-6 md:p-8';
   const inputClass =
