@@ -12,14 +12,19 @@ interface BMICalculatorStorage {
 
 const BMI_STORAGE_KEY = 'fp_bmi';
 
-const BMICalculator: React.FC = () => {
+interface BMICalculatorProps {
+  currentWeight: number;
+  onWeightChange: (weight: number) => void;
+}
+
+const BMICalculator: React.FC<BMICalculatorProps> = ({ currentWeight, onWeightChange }) => {
   const initialBmiState = readFromStorage<BMICalculatorStorage>(BMI_STORAGE_KEY, {
-    weight: 82,
+    weight: currentWeight || 82,
     height: 182,
-    submitted: { weight: 82, height: 182 },
+    submitted: { weight: currentWeight || 82, height: 182 },
   });
 
-  const [weight, setWeight] = useState<number>(initialBmiState.weight);
+  const [weight, setWeight] = useState<number>(currentWeight || initialBmiState.weight);
   const [height, setHeight] = useState<number>(initialBmiState.height);
   const [submitted, setSubmitted] = useState<{ weight: number; height: number }>(initialBmiState.submitted);
 
@@ -75,6 +80,7 @@ const BMICalculator: React.FC = () => {
     if (weight <= 0 || height <= 0) return;
 
     setSubmitted({ weight, height });
+    onWeightChange(weight);
   };
 
   const bmiNumber = Number.parseFloat(bmiData.bmi);
@@ -84,6 +90,9 @@ const BMICalculator: React.FC = () => {
       <div className="space-y-1">
         <h2 className="text-3xl font-semibold tracking-tight text-foreground md:text-4xl">BMI</h2>
         <p className="text-sm text-muted-foreground">Check body mass index from your height and weight.</p>
+        <p className="text-sm text-muted-foreground">
+          Current profile weight: <span className="font-medium text-foreground">{currentWeight > 0 ? `${currentWeight} kg` : 'not set yet'}</span>
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">

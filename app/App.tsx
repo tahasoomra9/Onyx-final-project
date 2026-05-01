@@ -78,9 +78,9 @@ const App: React.FC = () => {
     if (latestDate !== today && latestDate !== yesterdayStr) return 0;
     let currentStreak = 0;
     const checkDate = new Date(latestDate);
-    for (let i = 0; i < sortedDates.length; i += 1) {
+    for (const date of sortedDates) {
       const dStr = checkDate.toISOString().split('T')[0];
-      if (allDates.has(dStr)) {
+      if (date === dStr) {
         currentStreak++;
         checkDate.setDate(checkDate.getDate() - 1);
       } else {
@@ -107,6 +107,79 @@ const App: React.FC = () => {
     setTemplates(prev => prev.filter(t => t.id !== id));
   };
 
+  const handleLoadDemoData = () => {
+    const today = new Date();
+    const dayStr = (d: Date) => d.toISOString().split('T')[0];
+
+    const demoWorkouts: WorkoutSession[] = [
+      {
+        id: 'wk1',
+        date: dayStr(new Date(today.getTime() - 2 * 86400000)),
+        exercises: [
+          { id: 'e1', name: 'Squat', sets: 3, reps: 8, weight: 60, duration: 20 },
+          { id: 'e2', name: 'Bench Press', sets: 3, reps: 8, weight: 40, duration: 15 }
+        ],
+        type: 'Strength'
+      },
+      {
+        id: 'wk2',
+        date: dayStr(new Date(today.getTime() - 86400000)),
+        exercises: [
+          { id: 'e3', name: 'Deadlift', sets: 3, reps: 5, weight: 90, duration: 25 }
+        ],
+        type: 'Strength'
+      },
+      {
+        id: 'wk3',
+        date: dayStr(today),
+        exercises: [
+          { id: 'e4', name: 'Row', sets: 4, reps: 10, weight: 30, duration: 20 }
+        ],
+        type: 'Conditioning'
+      }
+    ];
+
+    const demoSleep: SleepLog[] = [
+      { id: 's1', date: dayStr(new Date(today.getTime() - 2 * 86400000)), duration: 7.5, quality: 4, notes: '' },
+      { id: 's2', date: dayStr(new Date(today.getTime() - 86400000)), duration: 6.8, quality: 3, notes: '' },
+      { id: 's3', date: dayStr(today), duration: 8, quality: 5, notes: '' }
+    ];
+
+    const demoCalories: CalorieLog[] = [
+      { id: 'c1', date: dayStr(today), calories: 450, label: 'Breakfast' },
+      { id: 'c2', date: dayStr(today), calories: 650, label: 'Lunch' },
+      { id: 'c3', date: dayStr(today), calories: 700, label: 'Dinner' }
+    ];
+
+    const demoWater: WaterLog[] = [
+      { id: 'wtr1', date: dayStr(today), amount: 1200 },
+      { id: 'wtr2', date: dayStr(new Date(today.getTime() - 86400000)), amount: 900 }
+    ];
+
+    const demoTemplates: WorkoutTemplate[] = [
+      { id: 't1', name: 'Full Body', exercises: [{ name: 'Squat', sets: 3, reps: 8 }, { name: 'Push', sets: 3, reps: 8 }] }
+    ];
+
+    const demoProfile: UserProfile = {
+      id: 'demo_user',
+      name: 'Demo',
+      weight: 75,
+      height: 175,
+      age: 28,
+      gender: 'male',
+      goal: 'maintain',
+      activityLevel: 1.4,
+      calorieLimit: 2200
+    };
+
+    setWorkouts(demoWorkouts);
+    setSleepLogs(demoSleep);
+    setCalorieLogs(demoCalories);
+    setWaterLogs(demoWater);
+    setTemplates(demoTemplates);
+    setUserProfile(demoProfile);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -126,14 +199,14 @@ const App: React.FC = () => {
       case 'meal-planner':
         return <MealPlanner />;
       case 'bmi':
-        return <BMICalculator />;
+        return <BMICalculator currentWeight={userProfile.weight} onWeightChange={(weight) => setUserProfile(prev => ({ ...prev, weight }))} />;
       default:
         return <Dashboard workouts={workouts} sleepLogs={sleepLogs} calorieLogs={calorieLogs} waterLogs={waterLogs} userProfile={userProfile} streak={streak} onAddWater={handleAddWater} />;
     }
   };
 
   return (
-    <Layout activeTab={activeTab} setActiveTab={setActiveTab} streak={streak}>
+    <Layout activeTab={activeTab} setActiveTab={setActiveTab} streak={streak} onLoadDemo={handleLoadDemoData}>
       {renderContent()}
     </Layout>
   );
